@@ -1,4 +1,7 @@
 // md-links module with a function to extract links from markdown files
+
+const mdLinks = require("md-links");
+
 mdLinks(path, options) => {
     return new Promise((resolve, reject) => {
       // resolve the path to an absolute path
