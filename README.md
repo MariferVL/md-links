@@ -673,5 +673,3 @@ cuenta utilizando **new Promise()**
 
 Es importante que sepas qué es un **callback** pues las
 promesas los utilizarán.
-#   M d - L i n k s  
- 
