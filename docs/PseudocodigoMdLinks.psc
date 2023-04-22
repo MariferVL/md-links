@@ -1,93 +1,122 @@
-//Obtener una lista de todos los archivos de markdown en el directorio.
-SubProceso list <- getDirList (path)
-	
-Fin SubProceso
 
-//Analizar el archivo y buscar todos los enlaces dentro de él.
-SubProceso links <- getLinks ( path )
-	
-Fin SubProceso
+// Obtener estado de ruta y de HTTP.
+SubProceso estados <- validarEstado (obj)
+	// Probar ruta para obtener ok o fail.
+	Si estadoRuta=ok Entonces
+		estadoHTTP <- '200';
+		estados <- ('estados');
+	SiNo
+		estadoHTTP <- '404';
+		estados <- ('estados');
+	FinSi
+FinSubProceso
 
-//Comprobar si es una ruta de archivo o directorio.
-SubProceso type <- detectTypePath ( path )
+
+
+// Calcular estadísticas de la ruta ingresada.
+SubProceso estadisticas <- calcularEstad (opciones)
+	Si opciones='stats' Entonces
+		estadisticas <- 'Total: 3 Unique: 3';
+	SiNo
+		estadisticas <- 'Total: 3 Unique: 3 Broken: 1';
+	FinSi
+FinSubProceso
+
+// Analizar el archivo y buscar todos los enlaces dentro de él.
+SubProceso objetoRutas <- obtenerRutas (objetoArchivos)
+	Mientras n<objetoArchivos Hacer
+		n <- n+1;
+		objetoRutas <- '{uRuta: user/documentos/reedme.md, archivo: [reedme.md],ruta: laboratoria.la}';
+	FinMientras
+FinSubProceso
+
+// Comprobar si es una ruta de archivo o directorio.
+SubProceso objArchivos <- detectaArchivo (ruta)
+	// Método para detectar tipo de ruta:
 	Si directorio Entonces
-		type = directorio;
-	FIN SI
+		// Obtener una lista de todos los archivos de markdown en el directorio.
+		Si markdown Entonces
+			// Crear objeto con ruta:ruta,archivo:[].
+			objArchivos <- ('a.html');
+		FinSi
+	FinSi
 	Si archivo Entonces
-		//Comprobar si es un archivo markdown
-		SI markdown Entonces
-			type = markdown;
+		// Comprobar si es un archivo markdown
+		Si markdown Entonces
+			objArchivos <- ('b.html');
 		FinSi
 	SiNo
-		errorMessage = "Error";
-	Fin Si
-	
-Fin SubProceso
+		// FIXME: No estoy segura si es correcto de hacer.
+		mensajeError <- 'Error';
+	FinSi
+FinSubProceso
 
-SubProceso pathValid <- validatePath ( path )
-	//Usar método para validar el path
-	Si path Entonces
-		pathValid = true;
+// Validar si entrada ingresada en CLI es una ruta.
+SubProceso rutaValida <- validarRuta (uRuta)
+	// Usar método para validar el path
+	Si uRuta Entonces
+		rutaValida <- true;
 	SiNo
-		pathValid = false;
+		rutaValida <- false;
+	FinSi
+FinSubProceso
 
-	Fin Si
-	
-Fin SubProceso
-
-SubProceso variable_de_retorno <- mdLinks (  )
-	
-Fin SubProceso
-
-//Verificar argumento de ruta ingresado por usuario.
-SubProceso linkFinded <- isLink ( userInput )
-	//	const regex = "/md-links\s+(.+)/";
+// Verificar si es una ruta válida y si existe.Retorna ruta
+SubProceso rutaEncontrada <- esRuta (uEntrada)
+	// const regex = "/md-links\s+(.+)/"
 	// regex.test(userInput)
-	Si userInput Entonces
-		//userInput.replace(/^md-links\s+/, '');
-		linkFinded = './some/example.md --validate';		
-	//Sino mostrar un mensaje de error y salir del programa.
+	Si uEntrada Entonces
+		// userInput.replace(/^md-links\s+/, '')
+		rutaEncontrada <- './algun/ejemplo.md --validate';
+		// Mostrar un mensaje de error y salir del programa.
 	SiNo
-		errorMessage  = "Error message. Quit Programm";
-		
-	Fin Si
-	
-Fin SubProceso
+		mensajeError <- 'Error de dato ingresado. Fin del Programa';
+	FinSi
+FinSubProceso
 
-
-
-Proceso Link
+Proceso MDLinks
+	Escribir 'Ingrese link a testear. Formato: md-links <path-to-file> [options] ';
+	// Obtener entrada desde CLI.
+	Leer uRuta;
+	r <- esRuta(uRuta);
+	// Validar si entrada ingresada en CLI es una ruta.
+	rutaValidada <- validarRuta(r);
+	// Comprobar si es una ruta de archivo o directorio.
+	objArchivos <- detectaArchivo(rutaValidada);
+	// Analizar el archivo y buscar todos los enlaces dentro de él.
+	objetoRutas <- obtenerRutas(objArchivos);
+	// Comprobar si el enlace es válido o no.
 	
-	Escribir "Ingrese link a testear. Formato: md-links <path-to-file> [options] ";
-	Leer userLink;
-	a = isLink(userLink);
-	//Si se proporciona una ruta, verificar si es una ruta válida y si existe.
-	b= validatePath(a);
-	c= detectTypePath(a);
-	
-	Si c = "directorio" Entonces
-		dirList = getDirList(a);
-	FIN SI
-	SI C = "markdown" ENTONCES
-		linksList =getLinks(a);
+	Si validate Entonces
+		// Obtener estado de ruta y de HTTP.
+		rutaValida <- validarEstado(objetoRutas);
+		Si rutaValida Entonces
+			// Obtener valores de estados.
+			uRuta <- './some/example.md http://algo.com/2/3/';
+			nombreRuta <- 'Link a algo';
+			estadoRuta <- 'ok';
+			estadoHTTP <- '200';
+			// Imprimir enlaces encontrados, estado HTTP y nombre de archivo.
+			Escribir './some/example.md http://algo.com/2/3/ ok 200 Link a algo';
+		SiNo
+			estadoRuta <- 'fail';
+		FinSi
+	FinSi
+	Si stats Entonces
+		// Calcular estadísticas sobre enlaces encontrados.
+		estadisticas <- calcularEstad(opciones);
+		// Imprimir estadisticas
+		Escribir 'Total: 3 Unique: 3';
+	FinSi
+	Si stats Y validate Entonces
+		// Obtener estado de ruta y de HTTP.
+		rutaValida <- validarEstado(objetoRutas);
+		// Calcular estadísticas adicionales basadas en validación.
+		estadisticas <- calcularEstad(opciones);
+		// Imprimir estadisticas
+		Escribir 'Total: 3 Unique: 3 Broken: 1';
 	SiNo
-		acciones_por_falso
-	Fin Si
-
-	
+		// Imprimir rutas encontradas en la entrada ingresada y nombre de ruta.
+		Escribir './some/example.md http://algo.com/2/3/ Link a algo';
+	FinSi
 FinProceso
-
-
-
-
-
-							
-//	Si se proporciona la opción --validate, comprobar si el enlace es válido o no.
-//	Si el enlace es válido, agregar una propiedad "ok" al objeto de enlace y establecerla en "ok".
-//	Si el enlace no es válido, agregar una propiedad "ok" al objeto de enlace y establecerla en "fail".
-//	Agregar los objetos de enlace a un array.
-//	Si se proporciona la opción --stats, calcular estadísticas sobre los enlaces encontrados.
-//	Si se proporciona la opción --stats y --validate, calcular estadísticas adicionales basadas en los resultados de validación.
-//	Mostrar los resultados de los enlaces y las estadísticas (si se proporcionan).
-//	Fin.
-//
