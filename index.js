@@ -2,17 +2,19 @@
 import fs from 'fs';
 import chalk from 'chalk';
 
-const mdLinks = (filePath) => {
+export function mdLinks() {
+  const filePath = process.argv[2];
+  if (!filePath) {
+    console.error(chalk.red('Debes ingresar la ruta del archivo a leer'));
+    return;
+  }
   fs.readFile(filePath, 'utf-8', (err, data) => {
     if (err) {
-      console.error(chalk.red('Error reading file:'), err);
+      console.error(chalk.red(`Error al leer el archivo: ${err}`));
     } else {
-      console.log(chalk.green('File content:'), data);
+      console.log(chalk.green(`Contenido del archivo:\n${data}`));
     }
   });
+}
 
-  const files = fs.readdirSync('.');
-  console.log(chalk.yellow('Current directory files:'), files);
-};
-
-export default mdLinks;
+mdLinks();
