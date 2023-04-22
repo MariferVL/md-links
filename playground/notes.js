@@ -8,3 +8,10 @@ __filename
   __dirname
   // get absolute route till the file in mjs
   import.meta.url
+
+
+  //Research:
+
+  readdirSync
+
+  FileSystem
