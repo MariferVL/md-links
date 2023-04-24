@@ -9,13 +9,13 @@ import path from 'path';
  * @returns
  */
 export function mdLinks(folderPath) {
+  //FIXME:cambiar
   const stats = fs.statSync(folderPath);
   if (stats.isDirectory()) {
     // console.log(chalk.bgHex('#FFE162').bold(`\n\nArchivos en Carpeta ${folderPath}:\n`));
     const files = fs.readdirSync(folderPath);
     files.forEach(file => {
       const filePath = path.join(folderPath, file);
-      //FIXME: Recursividad bien lograda?
       mdLinks(filePath);
     });
   } else if (stats.isFile()) {
@@ -28,7 +28,6 @@ export function mdLinks(folderPath) {
         } else {
           const regex = /\[(?<text>.*?)\]\((?<url>.*?)\)/g;
           let match;
-          //FIXME: Agregar ruta absoluta o solo nombre de archivo?
           console.log(chalk.bgHex('#00F5FF').bold(`\nContenido de ${fileName}: \n`));
 
           while ((match = regex.exec(data)) !== null) {
@@ -51,10 +50,10 @@ export function mdLinks(folderPath) {
  */
 function detectFolderPath() {
   const folderPath = process.argv[2];
+  console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t MD Links '));
   if (!folderPath) {
     console.error(chalk.whiteBright.bgRedBright.bold('\n Error: '), chalk.redBright('Debes ingresar la ruta de la carpeta a leer\n'));
   } else {
-    console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t MD Links '));
     //FIXME: Recursividad bien lograda?
     mdLinks(path.resolve(folderPath));
   }
