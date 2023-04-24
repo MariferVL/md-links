@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
-    "@babel/preset-env": "^7.21.4",
     "babel-jest": "^29.5.0",
     "jest": "^27.5.1"
   },
@@ -20,6 +19,7 @@
     "commit": "ffa75c8b2bede153844195479abeff01f3e34227"
   },
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.21.2",
     "ansi-styles": "^6.2.1",
     "chalk": "^5.2.0"
   }
