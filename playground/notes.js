@@ -47,5 +47,6 @@
 
   process.cwd()  //The process.cwd() method returns the current working directory of the Node.js process.
 
-
+  Console.table() //Muestra datos tabulares como una tabla.
+                  //Esta función toma un argumento obligatorio: data, que debe ser un array o un objeto, y un parámetro adicional: columns.
   
