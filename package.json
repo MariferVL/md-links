@@ -6,7 +6,7 @@
     "node": ">=16.x"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
