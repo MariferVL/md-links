@@ -1,78 +1,66 @@
-//TODO: index.js: Desde este archivo debes exportar una función (mdLinks).
 import fs from 'fs';
-import path from 'path';
 import chalk from 'chalk';
-import fetch from 'node-fetch';
+import path from 'path';
 
-const mdLinks = (filePath, options = {}) => {
-  const absolutePath = path.resolve(filePath);
-  const fileStats = fs.statSync(absolutePath);
-  if (fileStats.isDirectory()) {
-    const fileNames = fs.readdirSync(absolutePath);
-    const promises = fileNames.map((fileName) => mdLinks(path.join(absolutePath, fileName), options));
-    return Promise.all(promises).then((links) => [].concat(...links));
-  }
-  if (!fileStats.isFile() || path.extname(absolutePath) !== '.md') {
-    return Promise.reject(new Error('Invalid file'));
-  }
-  return new Promise((resolve) => {
-    fs.readFile(absolutePath, 'utf-8', (err, fileContent) => {
-      const links = [];
-      const regex = /\[([^\]]+)\]\((http[s]?:\/\/[^\s^)]+)\)/gm;
-      let match = regex.exec(fileContent);
-      while (match != null) {
-        const [fullMatch, text, href] = match;
-        links.push({ href, text, file: absolutePath });
-        match = regex.exec(fileContent);
-      }
-      if (options.validate) {
-        const linkPromises = links.map((link) => {
-          return fetch(link.href).then((res) => {
-            link.status = res.status;
-            link.ok = res.status >= 200 && res.status < 400 ? 'ok' : 'fail';
-            return link;
-          }).catch((err) => {
-            link.status = null;
-            link.ok = 'fail';
-            return link;
-          });
-        });
-        return Promise.all(linkPromises).then(resolve);
-      }
-      return resolve(links);
+/* HITO 5 */
+
+/**
+ * Read a Dir or .md File and print href, text, file name and extension.
+ * @returns
+ */
+export function mdLinks(folderPath) {
+  const stats = fs.statSync(folderPath);
+  if (stats.isDirectory()) {
+    // console.log(chalk.bgHex('#FFE162').bold(`\n\nArchivos en Carpeta ${folderPath}:\n`));
+    const files = fs.readdirSync(folderPath);
+    files.forEach(file => {
+      const filePath = path.join(folderPath, file);
+      //FIXME: Recursividad bien lograda?
+      mdLinks(filePath);
     });
-  });
-};
+  } else if (stats.isFile()) {
+    const ext = path.extname(folderPath);
+    const fileName = path.basename(folderPath);
+    if (ext === '.md') {
+      fs.readFile(folderPath, 'utf-8', (err, data) => {
+        if (err) {
+          console.error(chalk.whiteBright.bgRedBright.bold('/nError: '), chalk.redBright(`al leer el archivo: ${err}/n`));
+        } else {
+          const regex = /\[(?<text>.*?)\]\((?<url>.*?)\)/g;
+          let match;
+          //FIXME: Agregar ruta absoluta o solo nombre de archivo?
+          console.log(chalk.bgHex('#00F5FF').bold(`\nContenido de ${fileName}: \n`));
 
-const printLinks = (links) => {
-  links.forEach((link) => {
-    console.log(`${chalk.blue(link.file)} ${chalk.yellow(link.href)} ${chalk.green(link.text.substring(0, 50))}`);
-  });
-};
- 
-const printStats = (links) => {
-  const total = links.length;
-  const unique = [...new Set(links.map((link) => link.href))].length;
-  const broken = links.filter((link) => link.ok === 'fail').length;
-  console.log(`Total: ${total}\nUnique: ${unique}${options.validate ? `\nBroken: ${broken}` : ''}`);
-};
-
-if (require.main === module) {
-  const args = process.argv.slice(2);
-  const filePath = args[0];
-  const options = {};
-  if (args.includes('--validate')) {
-    options.validate = true;
+          while ((match = regex.exec(data)) !== null) {
+            console.log(chalk.bgHex('#EA047E').bold('href:      '), chalk.hex('#EA047E')(match[2]));
+            console.log(chalk.bgHex('#FF6D28').bold('Texto:     '), chalk.hex('#FF6D28')(match[1]));
+            console.log(chalk.bgHex('#FCE700').bold('Ruta:      '), chalk.hex('#FCE700')(folderPath));
+            console.log(chalk.bgHex('#00F5FF').bold('Extension: '), chalk.hex('#00F5FF')(ext));
+            console.log('');
+          }
+        }
+      });
+    }
+  } else {
+    console.error(chalk.whiteBright.bgRedBright.bold('/nError: '), chalk.redBright(`La ruta ${folderPath} no es válida/n`));
   }
-  mdLinks(filePath, options)
-    .then((links) => {
-      if (args.includes('--stats')) {
-        printStats(links);
-      } else {
-        printLinks(links);
-      }
-    })
-    .catch((err) => console.error(err.message));
 }
 
-export { mdLinks };
+
+/**
+ *  Check if a file or folder path was supplied as 3rd argument in CLI.
+ */
+function detectFolderPath() {
+  const folderPath = process.argv[2];
+  if (!folderPath) {
+    console.error(chalk.whiteBright.bgRedBright.bold('/nError: '), chalk.redBright('Debes ingresar la ruta de la carpeta a leer/n'));
+  } else {
+    console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t MD Links '));
+    //FIXME: Recursividad bien lograda?
+    mdLinks(path.resolve(folderPath));
+  }
+}
+
+detectFolderPath();
+
+
