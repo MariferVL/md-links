@@ -1,4 +1,3 @@
-
 // Obtener estado de ruta y de HTTP.
 SubProceso estados <- validarEstado (obj)
 	// Probar ruta para obtener ok o fail.
@@ -10,8 +9,6 @@ SubProceso estados <- validarEstado (obj)
 		estados <- ('estados');
 	FinSi
 FinSubProceso
-
-
 
 // Calcular estadísticas de la ruta ingresada.
 SubProceso estadisticas <- calcularEstad (opciones)
@@ -86,7 +83,6 @@ Proceso MDLinks
 	// Analizar el archivo y buscar todos los enlaces dentro de él.
 	objetoRutas <- obtenerRutas(objArchivos);
 	// Comprobar si el enlace es válido o no.
-	
 	Si validate Entonces
 		// Obtener estado de ruta y de HTTP.
 		rutaValida <- validarEstado(objetoRutas);
