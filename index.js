@@ -24,7 +24,7 @@ export function mdLinks(folderPath) {
     if (ext === '.md') {
       fs.readFile(folderPath, 'utf-8', (err, data) => {
         if (err) {
-          console.error(chalk.whiteBright.bgRedBright.bold('/nError: '), chalk.redBright(`al leer el archivo: ${err}/n`));
+          console.error(chalk.whiteBright.bgRedBright.bold('\n Error: '), chalk.redBright(`al leer el archivo: ${err}\n`));
         } else {
           const regex = /\[(?<text>.*?)\]\((?<url>.*?)\)/g;
           let match;
@@ -42,10 +42,9 @@ export function mdLinks(folderPath) {
       });
     }
   } else {
-    console.error(chalk.whiteBright.bgRedBright.bold('/nError: '), chalk.redBright(`La ruta ${folderPath} no es válida/n`));
+    console.error(chalk.whiteBright.bgRedBright.bold('\n Error: '), chalk.redBright(`La ruta ${folderPath} no es válida\n`));
   }
 }
-
 
 /**
  *  Check if a file or folder path was supplied as 3rd argument in CLI.
@@ -53,7 +52,7 @@ export function mdLinks(folderPath) {
 function detectFolderPath() {
   const folderPath = process.argv[2];
   if (!folderPath) {
-    console.error(chalk.whiteBright.bgRedBright.bold('/nError: '), chalk.redBright('Debes ingresar la ruta de la carpeta a leer/n'));
+    console.error(chalk.whiteBright.bgRedBright.bold('\n Error: '), chalk.redBright('Debes ingresar la ruta de la carpeta a leer\n'));
   } else {
     console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t MD Links '));
     //FIXME: Recursividad bien lograda?
