@@ -1,3 +1,6 @@
+
+
+
 import fs from 'fs';
 import chalk from 'chalk';
 import path from 'path';
@@ -65,7 +68,8 @@ function detectFolderPath() {
   console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t\t MD Links '));
 
   if (!folderPath) {
-    console.error('Error: Debes ingresar la ruta de la carpeta a leer\n');
+    console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red('Debes ingresar la ruta de la carpeta a leer\n'));
+
   } else {
     mdLinks(path.resolve(folderPath))
       .then(results => {
@@ -80,7 +84,8 @@ function detectFolderPath() {
 
       })
       .catch(err => {
-        console.error(`Error: ${err.message}`);
+        console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err.message));
+
       });
   }
 }
