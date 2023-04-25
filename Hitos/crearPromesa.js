@@ -1,6 +1,3 @@
-
-
-
 import fs from 'fs';
 import chalk from 'chalk';
 import path from 'path';
@@ -65,7 +62,7 @@ export function mdLinks(folderPath) {
  */
 function detectFolderPath() {
   const folderPath = process.argv[2];
-  console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t\t MD Links '));
+  console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t\t MD Links \n'));
 
   if (!folderPath) {
     console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red('Debes ingresar la ruta de la carpeta a leer\n'));
