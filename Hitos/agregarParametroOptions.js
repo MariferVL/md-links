@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import path from 'path';
 import fetch from 'node-fetch';
 
+/*  HITO 8  */
+
 /**
  * Read a Dir or .md File and return href, text, file name and extension as a Promise.
  * @returns {Promise}
