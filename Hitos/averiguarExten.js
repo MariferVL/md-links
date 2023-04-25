@@ -2,6 +2,8 @@ import fs from 'fs';
 import chalk from 'chalk';
 import path from 'path';
 
+/*  HITO 6  */
+
 /**
  * Read a .md file and Print href, text, file name and extension.
  * @returns 
