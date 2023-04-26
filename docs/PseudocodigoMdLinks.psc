@@ -71,7 +71,7 @@ SubProceso rutaEncontrada <- esRuta (uEntrada)
 	FinSi
 FinSubProceso
 
-Proceso MDLinks
+Proceso mdLinks
 	Escribir 'Ingrese link a testear. Formato: md-links <path-to-file> [options] ';
 	// Obtener entrada desde CLI.
 	Leer uRuta;
