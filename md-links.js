@@ -13,22 +13,16 @@ export function mdLinks(folderPath, options = { validate: false }) {
     const results = [];
 
     fs.stat(folderPath, (err, stats) => {
-      console.log(chalk.greenBright.bgWhiteBright.bold('Entró a fs.stat'));
       if (err) {
         console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, '\n\n'));
         reject(err);
       } else if (stats.isDirectory()) {
-        console.log(chalk.greenBright.bgWhiteBright.bold('Entró a isDirectory'));
 
         fs.readdir(folderPath, (err, files) => {
-          console.log(chalk.greenBright.bgWhiteBright.bold('Entró a fs.readir'));
-
           if (err) {
-
             console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, '\n\n'));
             reject(err);
           } else {
-            console.log(chalk.greenBright.bgWhiteBright.bold('Entró a obtener cada enlace del Dir'));
 
             const promises = files.map(file => {
               const filePath = path.join(folderPath, file);
@@ -47,16 +41,13 @@ export function mdLinks(folderPath, options = { validate: false }) {
           }
         });
       } else if (stats.isFile() && path.extname(folderPath) === '.md') {
-        console.log(chalk.greenBright.bgWhiteBright.bold('Entró a isFile'));
 
         fs.readFile(folderPath, 'utf-8', (err, data) => {
-          console.log(chalk.greenBright.bgWhiteBright.bold('Entró a fs.readFile'));
 
           if (err) {
             console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, '\n\n'));
             reject(err);
           } else {
-            console.log(chalk.greenBright.bgWhiteBright.bold('Entró a itirerar en cada enlace'));
 
             const regex = /\[(?<text>.*?)\]\((?<url>https?:\/\/[^\s)]+)(?<!#)\)/g;
             let match;
@@ -103,7 +94,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
         });
       } else {
         //FIXME: No sé si es adecuado.
-        console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, `El archivo ${path.basename(folderPath)} no es un archivo Markdown(.md).\n\n`));
+        //console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, `El archivo ${path.basename(folderPath)} no es un archivo Markdown(.md).\n\n`));
         resolve(results);
 
       }
