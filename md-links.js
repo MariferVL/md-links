@@ -1,7 +1,8 @@
 import fs from 'fs';
-import chalk from 'chalk';
 import path from 'path';
 import fetch from 'node-fetch';
+import chalk from 'chalk';
+
 
 /**
  * Read a Dir or .md File and return href, text, file name and extension as a Promise.
@@ -12,13 +13,23 @@ export function mdLinks(folderPath, options = { validate: false }) {
     const results = [];
 
     fs.stat(folderPath, (err, stats) => {
+      console.log(chalk.greenBright.bgWhiteBright.bold('Entró a fs.stat'));
       if (err) {
+        console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, '\n\n'));
         reject(err);
       } else if (stats.isDirectory()) {
+        console.log(chalk.greenBright.bgWhiteBright.bold('Entró a isDirectory'));
+
         fs.readdir(folderPath, (err, files) => {
+          console.log(chalk.greenBright.bgWhiteBright.bold('Entró a fs.readir'));
+
           if (err) {
+
+            console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, '\n\n'));
             reject(err);
           } else {
+            console.log(chalk.greenBright.bgWhiteBright.bold('Entró a obtener cada enlace del Dir'));
+
             const promises = files.map(file => {
               const filePath = path.join(folderPath, file);
               return mdLinks(filePath, options);
@@ -28,14 +39,25 @@ export function mdLinks(folderPath, options = { validate: false }) {
                 results.push(...resultsArr.flat());
                 resolve(results);
               })
-              .catch(reject);
+              .catch((err) => {
+                console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red('Se generó un problema con la búsqueda.\n\n'));
+                reject(err);
+
+              });
           }
         });
       } else if (stats.isFile() && path.extname(folderPath) === '.md') {
+        console.log(chalk.greenBright.bgWhiteBright.bold('Entró a isFile'));
+
         fs.readFile(folderPath, 'utf-8', (err, data) => {
+          console.log(chalk.greenBright.bgWhiteBright.bold('Entró a fs.readFile'));
+
           if (err) {
+            console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, '\n\n'));
             reject(err);
           } else {
+            console.log(chalk.greenBright.bgWhiteBright.bold('Entró a itirerar en cada enlace'));
+
             const regex = /\[(?<text>.*?)\]\((?<url>https?:\/\/[^\s)]+)(?<!#)\)/g;
             let match;
             const links = [];
@@ -62,9 +84,9 @@ export function mdLinks(folderPath, options = { validate: false }) {
                     link.statusMessage = res.statusText;
                     results.push(link);
                   })
-                  .catch(() => {
-                    link.status = 'error';
-                    link.statusMessage = 'Link not found';
+                  .catch((err) => {
+                    link.status = err.status;
+                    link.statusMessage = err.statusText;
                     results.push(link);
                   })
                   .finally(() => {
@@ -80,48 +102,11 @@ export function mdLinks(folderPath, options = { validate: false }) {
           }
         });
       } else {
+        //FIXME: No sé si es adecuado.
+        console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err, `El archivo ${path.basename(folderPath)} no es un archivo Markdown(.md).\n\n`));
         resolve(results);
+
       }
     });
   });
 }
-
-
-/**
- *  Check if a file or folder path was supplied as 3rd argument in CLI.
- */
-function detectFolderPath() {
-  const folderPath = process.argv[2];
-  const options = {};
-  // Check if validate option was passed as a CLI argument
-  if (process.argv.includes('--validate')) {
-    options.validate = true;
-  }
-  console.log(chalk.magentaBright.bgWhiteBright.underline.bold('\n\n\t\t\t\t\t MD Links '));
-
-  if (!folderPath) {
-    console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red('Debes ingresar la ruta de la carpeta a leer\n'));
-  } else {
-    mdLinks(path.resolve(folderPath), options)
-      .then(results => {
-        results.forEach(result => {
-          console.log(chalk.bgHex('#EA047E').bold('href:      '), chalk.hex('#EA047E')(result.href));
-          console.log(chalk.bgHex('#FF6D28').bold('Texto:     '), chalk.hex('#FF6D28')(result.text));
-          console.log(chalk.bgHex('#FCE700').bold('Ruta:      '), chalk.hex('#FCE700')(folderPath));
-          console.log(chalk.bgHex('#69FF63').bold('Extension: '), chalk.hex('#69FF63')(result.extension));
-          if (options.validate) {
-            console.log(chalk.bgHex('#00F5FF').bold('Estado:    '), chalk.hex('#00F5FF')(result.status),result.statusMessage ? chalk.bgGreenBright.bold.green(' OK ') : chalk.bgRedBright.bold.red(' FAIL '));
-          }
-          console.log('');
-
-        });
-
-      })
-      .catch(err => {
-        console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red(err.message));
-
-      });
-  }
-}
-
-detectFolderPath();
