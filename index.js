@@ -31,7 +31,7 @@ function detectFolderPath() {
                 if (options.stats) {
                     const total = results.length;
                     const unique = new Set(results.map(result => result.href)).size;
-                    const totalFiles = new Set(results.map(result => result.file)).size;
+                    const totalFiles = new Set(results.map(result => result.fileName)).size;
                     console.log(chalk.bgHex('#00F5FF').bold('Total Archivos:  '), chalk.hex('#00F5FF')(totalFiles));
                     console.log(chalk.bgHex('#69FF63').bold('Total Enlaces:   '), chalk.hex('#69FF63')(total));
                     console.log(chalk.bgHex('#FCE700').bold('Enlaces Únicos:  '), chalk.hex('#FCE700')(unique));
