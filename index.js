@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import chalk from 'chalk';
 import path from 'path';
 import { mdLinks } from './md-links.js';
@@ -47,7 +49,8 @@ function detectFolderPath() {
 
                 } else {
                     results.forEach(result => {
-                        console.log(chalk.bgHex('#EA047E').bold('href:      '), chalk.hex('#EA047E')(result.href));
+                        console.log(chalk.bgHex('#9B59FF').bold('Línea:     '), chalk.hex('#9B59FF')(result.linkLine));
+                        console.log(chalk.bgHex('#EA047E').bold('Href:      '), chalk.hex('#EA047E')(result.href));
                         console.log(chalk.bgHex('#FF6D28').bold('Texto:     '), chalk.hex('#FF6D28')(result.text));
                         console.log(chalk.bgHex('#FCE700').bold('Ruta:      '), chalk.hex('#FCE700')(folderPath));
                         console.log(chalk.bgHex('#69FF63').bold('Extension: '), chalk.hex('#69FF63')(result.extension));
