@@ -1,7 +1,9 @@
 import fs from 'fs';
+import chalk from 'chalk';
 import path from 'path';
 import fetch from 'node-fetch';
 
+/*  HITO H.E.   */
 
 /**
  * Read a Dir or .md File and return href, text, file name and extension as a Promise.
@@ -40,6 +42,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
             let match;
             const links = [];
             const lines = data.split('\n');
+            console.log(lines.length);        
 
             while ((match = regex.exec(data)) !== null) {
               const link = {
