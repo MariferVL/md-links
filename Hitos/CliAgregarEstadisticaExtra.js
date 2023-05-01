@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import path from 'path';
 import { mdLinks } from './md-links.js';
 
+/* Hacker Edition */
 
 /**
  *  Check if a file or folder path was supplied as 3rd argument in CLI.
