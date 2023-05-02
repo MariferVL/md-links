@@ -2,39 +2,136 @@
 //Tu inplementación debe pasar estos tets.
 import { mdLinks } from '../md-links.js';
 import fs from 'fs';
-import chalk from 'chalk';
+import path from 'path';
+import fetch from 'node-fetch';
+
+jest.setTimeout(44000);
 
 describe('mdLinks', () => {
-  test('should print an error message when no file path is provided', () => {
-    console.error = jest.fn();
-    process.argv[2] = undefined;
-
-    mdLinks();
-
-    expect(console.error).toHaveBeenCalledWith(chalk.white.bgRed.bold('Error: '),chalk.red('Debes ingresar la ruta del archivo a leer'));
+  describe('with invalid folder path', () => {
+    it('should return an error', (done) => {
+      mdLinks('invalid/path')
+        .catch((error) => {
+          //FIXME: ¿qué puedo usar?
+          expect(error).toEqual(expect.anything());
+          done();
+        });
+    });
+            // expect(error).toEqual(expect.any(Error));
+          // expect(error).toBeInstanceOf(Error);
   });
 
-  test('should print the href, text, and file name of the links in the file', () => {
-    console.log = jest.fn();
-    const filePath = 'test.md';
-    process.argv[2] = filePath;
+  describe('with valid folder path', () => {
+    const testFolder = path.join(__dirname, 'testFolder');
 
-    const fileContent = '[Google](https://www.google.com)\n[Facebook](https://www.facebook.com)';
-    fs.readFile = jest.fn().mockImplementationOnce((path, options, callback) => {
-      callback(null, fileContent);
+    describe('when folder is empty', () => {
+      it('should return an empty array', (done) => {
+        mdLinks(testFolder)
+          .then((links) => {
+            expect(links).toEqual([]);
+            done();
+          });
+      });
     });
 
-    mdLinks();
+    
+    describe('when folder contains a non-Markdown file', () => {
+      beforeAll(() => {
+        fs.writeFileSync(path.join(testFolder, 'not-a-markdown-file.txt'), 'This is not a Markdown file.');
+      });
 
-    expect(console.log).toHaveBeenCalledWith(chalk.black.bgHex('#00F5FF').bold.underline('\n\n\t\t\t\t Md Links '));
-    expect(console.log).toHaveBeenCalledWith(chalk.black.bgHex('#00F5FF').bold(`\nEl contenido de ${filePath} es: \n`));
-    expect(console.log).toHaveBeenCalledWith(chalk.whiteBright.bgHex('#EA047E').bold('href: '), chalk.hex('#EA047E')('https://www.google.com'));
-    expect(console.log).toHaveBeenCalledWith(chalk.bgHex('#FF6D28').bold('text: '), chalk.hex('#FF6D28')('Google'));
-    expect(console.log).toHaveBeenCalledWith(chalk.bgHex('#FCE700').bold('file: '), chalk.hex('#FCE700')(filePath));
-    expect(console.log).toHaveBeenCalledWith('');
-    expect(console.log).toHaveBeenCalledWith(chalk.whiteBright.bgHex('#EA047E').bold('href: '), chalk.hex('#EA047E')('https://www.facebook.com'));
-    expect(console.log).toHaveBeenCalledWith(chalk.bgHex('#FF6D28').bold('text: '), chalk.hex('#FF6D28')('Facebook'));
-    expect(console.log).toHaveBeenCalledWith(chalk.bgHex('#FCE700').bold('file: '), chalk.hex('#FCE700')(filePath));
-    expect(console.log).toHaveBeenCalledWith('');
+      afterAll(() => {
+        fs.unlinkSync(path.join(testFolder, 'not-a-markdown-file.txt'));
+      });
+
+      it('should return an empty array', (done) => {
+        mdLinks(testFolder)
+          .then((links) => {
+            expect(links).toEqual([]);
+            done();
+          });
+      });
+    });
+
+    describe('when folder contains a Markdown file with no links', () => {
+      beforeAll(() => {
+        fs.writeFileSync(path.join(testFolder, 'no-links.md'), 'This Markdown file contains no links.');
+      });
+
+      afterAll(() => {
+        fs.unlinkSync(path.join(testFolder, 'no-links.md'));
+      });
+
+      it('should return an empty array', (done) => {
+        mdLinks(testFolder)
+          .then((links) => {
+            expect(links).toEqual([]);
+            done();
+          });
+      });
+    });
+
+    describe('when folder contains a Markdown file with links', () => {
+      beforeAll(() => {
+        fs.writeFileSync(path.join(testFolder, 'with-links.md'), '[Link 1](https://www.example.com)\n[Link 2](https://www.example.org)');
+      });
+
+      afterAll(() => {
+        fs.unlinkSync(path.join(testFolder, 'with-links.md'));
+      });
+
+      it('should return an array of links', (done) => {
+        mdLinks(testFolder)
+          .then((links) => {
+            expect(links).toEqual([
+           
+              {
+                href: 'https://www.example.com',
+                text: 'Link 1',
+                fileName: 'with-links.md',
+                extension: '.md',
+                linkLine: 1
+              }, 
+              {
+                href: 'https://www.example.org',
+                text: 'Link 2',
+                fileName: 'with-links.md',
+                extension: '.md',
+                linkLine: 2
+              }
+            ]);
+            done();
+          });
+      });
+
+      describe('with validate option', () => {
+        it('should return an array of links with status information', (done) => {
+          mdLinks(testFolder, { validate: true })
+            .then((links) => {
+              expect(links).toEqual([
+                {
+                  href: 'https://www.example.com',
+                  text: 'Link 1',
+                  fileName: 'with-links.md',
+                  extension: '.md',
+                  linkLine: 1,
+                  status: 200,
+                  statusMessage: 'OK'
+                },
+                {
+                  href: 'https://www.example.org',
+                  text: 'Link 2',
+                  fileName: 'with-links.md',
+                  extension: '.md',
+                  linkLine: 2,
+                  status: 200,
+                  statusMessage: 'OK'
+                }                
+              ]);
+              done();
+            });
+          });
+        });
+      });
+    });
   });
-});
