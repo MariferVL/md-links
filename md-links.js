@@ -17,6 +17,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
       } else if (stats.isDirectory()) {
         fs.readdir(folderPath, (err, files) => {
           if (err) {
+            //FIXME: PU pendiente
             reject(err);
           } else {
             const promises = files.map(file => {
@@ -34,6 +35,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
       } else if (stats.isFile() && path.extname(folderPath) === '.md') {
         fs.readFile(folderPath, 'utf-8', (err, data) => {
           if (err) {
+            //FIXME: PU pendiente
             reject(err);
           } else {
             const regex = /\[(?<text>.*?)\]\((?<url>https?:\/\/[^\s)]+)(?<!#)\)/g;
@@ -65,7 +67,8 @@ export function mdLinks(folderPath, options = { validate: false }) {
                     link.statusMessage = res.statusText;
                     results.push(link);
                   })
-                  .catch(() => {
+                  //FIXME: PU pendiente
+                 .catch(() => {
                     link.status = 'error';
                     link.statusMessage = 'Link not found';
                     results.push(link);
