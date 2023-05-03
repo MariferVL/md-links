@@ -33,9 +33,9 @@ function detectFolderPath() {
                     const total = results.length;
                     const unique = new Set(results.map(result => result.href)).size;
                     const totalFiles = new Set(results.map(result => result.fileName)).size;
-                    console.log(chalk.bgHex('#00F5FF').bold('Total Files:  '), chalk.hex('#00F5FF')(totalFiles));
-                    console.log(chalk.bgHex('#69FF63').bold('Total Links:   '), chalk.hex('#69FF63')(total));
-                    console.log(chalk.bgHex('#FCE700').bold('Unique Links:  '), chalk.hex('#FCE700')(unique));
+                    console.log(chalk.bgHex('#00F5FF').bold('Total Files:    '), chalk.hex('#00F5FF')(totalFiles));
+                    console.log(chalk.bgHex('#69FF63').bold('Total Links:    '), chalk.hex('#69FF63')(total));
+                    console.log(chalk.bgHex('#FCE700').bold('Unique Links:   '), chalk.hex('#FCE700')(unique));
                     
                     if (options.validate) {
                         const broken = results.filter(result => result.status !== 200).length;
@@ -48,13 +48,13 @@ function detectFolderPath() {
 
                 } else {
                     results.forEach(result => {
-                        console.log(chalk.bgHex('#9B59FF').bold('Line:     '), chalk.hex('#9B59FF')(result.linkLine));
+                        console.log(chalk.bgHex('#9B59FF').bold('Line:      '), chalk.hex('#9B59FF')(result.linkLine));
                         console.log(chalk.bgHex('#EA047E').bold('Href:      '), chalk.hex('#EA047E')(result.href));
-                        console.log(chalk.bgHex('#FF6D28').bold('Text:     '), chalk.hex('#FF6D28')(result.text));
+                        console.log(chalk.bgHex('#FF6D28').bold('Text:      '), chalk.hex('#FF6D28')(result.text));
                         console.log(chalk.bgHex('#FCE700').bold('Path:      '), chalk.hex('#FCE700')(folderPath));
                         console.log(chalk.bgHex('#69FF63').bold('Extension: '), chalk.hex('#69FF63')(result.extension));
                         if (options.validate) {
-                            console.log(chalk.bgHex('#00F5FF').bold('State:    '), chalk.hex('#00F5FF')(result.status), result.statusMessage ? chalk.bgGreenBright.bold.green(' OK ') : chalk.bgRedBright.bold.red(' FAIL '));
+                            console.log(chalk.bgHex('#00F5FF').bold('State:     '), chalk.hex('#00F5FF')(result.status), result.statusMessage ? chalk.bgGreenBright.bold.green(' OK ') : chalk.bgRedBright.bold.red(' FAIL '));
                         }
                         console.log('\n\n');
                     });
