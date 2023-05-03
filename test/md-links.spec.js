@@ -1,6 +1,4 @@
-//TODO: test/md-links.spec.js debe contener los tests unitarios para la función mdLinks(). 
-//Tu inplementación debe pasar estos tets.
-import { mdLinks } from '../md-links.js';
+import { mdLinks } from '../src/md-links.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -11,18 +9,14 @@ describe('mdLinks', () => {
     it('should return an error', (done) => {
       mdLinks('invalid/path')
         .catch((error) => {
-          //FIXME: ¿qué puedo usar?
           expect(error).toEqual(expect.anything());
           done();
         });
     });
-            // expect(error).toEqual(expect.any(Error));
-          // expect(error).toBeInstanceOf(Error);
   });
 
   describe('with valid folder path', () => {
     const testFolder = path.join(__dirname, 'testFolder');
-
     describe('when folder is empty', () => {
       it('should return an empty array', (done) => {
         mdLinks(testFolder)
