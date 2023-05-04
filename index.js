@@ -9,8 +9,24 @@ import { mdLinks } from './src/md-links.js';
  *  Check if a file or folder path was supplied as 3rd argument in CLI.
  */
 function detectFolderPath() {
+    // Initialize the folderPath and options objects
     const folderPath = process.argv[2];
     const options = {};
+
+    console.log(chalk.magentaBright.bgWhiteBright.bold('\n\n\t\t\t\t\t\t MD Links \n'));
+    console.log(chalk.whiteBright.bold('\t\t\t\t\tby María-Fernanda Villalobos \n\n'));
+
+    // Check if help option was passed as a CLI argument
+    if (process.argv.includes('--help')) {
+        // Print the help message and return if the `--help` flag is present
+        console.log(chalk.whiteBright('Usage: md-links <path-to-file> [options]'));
+        console.log(chalk.whiteBright('\nOptions:'));
+        console.log(chalk.whiteBright('\t--validate  Check if the links are broken'));
+        console.log(chalk.whiteBright('\t--stats     Show statistics of the links'));
+        console.log(chalk.whiteBright('\t--help      Show this help message'));
+        console.log('\n');
+        return;
+    }
     // Check if stats option was passed as a CLI argument
     if (process.argv.includes('--stats')) {
         options.stats = true;
@@ -21,15 +37,15 @@ function detectFolderPath() {
         options.validate = true;
     }
 
-    console.log(chalk.magentaBright.bgWhiteBright.bold('\n\n\t\t\t\t\t\t MD Links \n'));
-    console.log(chalk.whiteBright.bold('\t\t\t\t\tby María-Fernanda Villalobos \n\n'));
-
+    // Check if the folderPath is empty
     if (!folderPath) {
         console.error(chalk.whiteBright.bgRed.bold('Error: '), chalk.red('You must enter the path to the folder/file to be read. \n\tFormat: md-links <path-to-file> [options]\n\n '));
     } else {
+        // Call mdLinks() function to extract and validate links
         mdLinks(path.resolve(folderPath), options)
             .then(results => {
                 if (options.stats) {
+                    // Print statistics if `--stats` flag is present
                     const total = results.length;
                     const unique = new Set(results.map(result => result.href)).size;
                     const totalFiles = new Set(results.map(result => result.fileName)).size;
@@ -48,6 +64,7 @@ function detectFolderPath() {
 
                 } else {
                     results.forEach(result => {
+                        // Print each link with its details if `--stats` flag is not present
                         console.log(chalk.bgHex('#9B59FF').bold('Line:      '), chalk.hex('#9B59FF')(result.linkLine));
                         console.log(chalk.bgHex('#EA047E').bold('Href:      '), chalk.hex('#EA047E')(result.href));
                         console.log(chalk.bgHex('#FF6D28').bold('Text:      '), chalk.hex('#FF6D28')(result.text));

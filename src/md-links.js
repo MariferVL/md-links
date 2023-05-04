@@ -58,6 +58,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
             if (options.validate) {
               const numLinks = links.length;
               let validatedLinks = 0;
+              //FIXME: cambiar a map y crear un Promise.all. Limitar numero de promesas
               links.forEach(link => {
                 fetch(link.href)
                   .then(res => {
@@ -65,7 +66,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
                     link.statusMessage = res.statusText;
                     results.push(link);
                   })
-                 .catch(() => {
+                  .catch(() => {
                     link.status = 'error';
                     link.statusMessage = 'Link not found';
                     results.push(link);
