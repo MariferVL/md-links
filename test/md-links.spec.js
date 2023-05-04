@@ -9,7 +9,7 @@ describe('mdLinks', () => {
     it('should return an error', (done) => {
       mdLinks('invalid/path')
         .catch((error) => {
-          expect(error).toEqual(expect.anything());
+          expect(error.errno).toBe(-4058);
           done();
         });
     });
