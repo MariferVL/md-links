@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import fetch from 'node-fetch';
 
+//FIXME: paradigma de programación(funcional)
+//FIXME: patrones de diseño de software
 
 /**
  * Read a Dir or .md File and return href, text, file name and extension as a Promise.
@@ -10,7 +12,7 @@ import fetch from 'node-fetch';
 export function mdLinks(folderPath, options = { validate: false }) {
   return new Promise((resolve, reject) => {
     const results = [];
-
+    //Check for the existence of a file before calling fs.readFile().
     fs.stat(folderPath, (err, stats) => {
       if (err) {
         reject(err);
@@ -23,6 +25,7 @@ export function mdLinks(folderPath, options = { validate: false }) {
               const filePath = path.join(folderPath, file);
               return mdLinks(filePath, options);
             });
+            //Ensures all files in the folder have been processed and all found Markdown links have been added.
             Promise.all(promises)
               .then(resultsArr => {
                 results.push(...resultsArr.flat());
